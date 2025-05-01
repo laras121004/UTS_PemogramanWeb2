@@ -158,6 +158,72 @@ if (isset($_GET["username"])) {
     <input type="submit" value="Check">
 </form>
 ```
+2.	Saya mencoba payload Boolean-based:
+admin' AND substring(password,1,1)='a
+Hasil:
+•	Jika karakter pertama password admin adalah 'a', aplikasi akan menampilkan "Username exists"
+•	Jika bukan, aplikasi akan menampilkan "Username does not exist"
+•	Dengan melakukan ini secara berulang untuk setiap posisi dan karakter yang mungkin, saya bisa mendapatkan password admin karakter demi karakter
+Dampak SQL Injection
+Berdasarkan eksperimen di atas, dampak SQL Injection dapat sangat serius, meliputi:
+1.	Pelanggaran Otentikasi: Penyerang dapat masuk tanpa kredensial yang valid atau bahkan sebagai administrator.
+2.	Pencurian Data: Informasi sensitif seperti data pribadi pengguna, informasi kartu kredit, atau kekayaan intelektual dapat dicuri.
+3.	Perusakan Data: Database dapat dimodifikasi atau dihapus menggunakan perintah seperti UPDATE, DELETE, atau DROP.
+4.	Pengambilalihan Server: Dalam kasus ekstrim, penyerang dapat mengeksekusi perintah di tingkat sistem operasi melalui fungsi database tertentu.
+5.	Kerusakan Reputasi: Kebocoran data dapat menyebabkan kerugian reputasi yang signifikan bagi organisasi.
+Strategi Pencegahan SQL Injection
+Berdasarkan hasil eksperimen, berikut adalah strategi pencegahan SQL Injection yang efektif:
+1. Prepared Statements dengan Parameterized Queries
+Metode ini memisahkan SQL dari data input, mencegah penyerang memanipulasi struktur query:
+// Versi aman menggunakan prepared statement
+
+![image](https://github.com/user-attachments/assets/895470a5-3b02-4b5a-96e0-b12d08746b19)
+
+2. Stored Procedures
+Menggunakan stored procedure dapat membatasi akses dan memisahkan logika database dari logika aplikasi:
+// Menggunakan stored procedure
+
+![image](https://github.com/user-attachments/assets/9ae62f3d-6f4e-4d5d-b0f3-0a0d01c2c499)
+
+3. Input Validation
+Validasi input di sisi server dan klien dapat mencegah input berbahaya:
+// Validasi input
+
+![image](https://github.com/user-attachments/assets/c6307552-131d-4fbc-b9ca-518a60f542f5)
+
+4. Escaping Special Characters
+Menggunakan fungsi yang disediakan oleh database untuk escape karakter khusus:
+// Menggunakan real_escape_string
+
+![image](https://github.com/user-attachments/assets/492889a5-1901-4bc1-a022-ccad34bf500a)
+
+Implementasi ORM (Object-Relational Mapping)
+Framework ORM seperti Doctrine (PHP), Hibernate (Java), atau Entity Framework (C#) menyediakan lapisan abstraksi yang aman antara kode aplikasi dan database.
+6. Implementasi WAF (Web Application Firewall)
+WAF dapat membantu memfilter serangan SQL Injection dengan memblokir pola input yang mencurigakan.
+7. Principle of Least Privilege
+Menggunakan akun database dengan hak akses terbatas untuk koneksi aplikasi web, bukan akun administratif.
+Implementasi Praktis: Rekomendasi Keamanan
+Dari eksperimen saya, berikut adalah rekomendasi praktis untuk mengamankan aplikasi web dari SQL Injection:
+1.	Selalu gunakan prepared statements untuk semua query database, tidak peduli seberapa sederhana atau tidak berbahaya query tersebut tampaknya.
+2.	Terapkan validasi input yang ketat pada semua parameter yang diterima dari pengguna, terutama yang digunakan dalam query database.
+3.	Terapkan filtering whitelist - hanya izinkan karakter yang diketahui aman, bukan hanya memblokir karakter berbahaya.
+4.	Gunakan ORM untuk meningkatkan produktivitas dan keamanan secara bersamaan.
+5.	Lakukan pengujian penetrasi secara berkala menggunakan alat seperti SQLmap untuk mendeteksi kerentanan SQL Injection.
+6.	Implementasikan error handling yang baik untuk mencegah kebocoran informasi database melalui pesan kesalahan.
+7.	Gunakan WAF sebagai lapisan keamanan tambahan.
+   
+# Kesimpulan
+SQL Injection tetap menjadi ancaman serius bagi aplikasi web modern meskipun solusinya relatif sederhana. Melalui eksperimen dalam artikel ini, kita dapat melihat betapa mudahnya bagi penyerang untuk mengeksploitasi aplikasi yang tidak diproteksi dengan baik, dan betapa luas dampak yang dapat ditimbulkan.
+Kunci untuk mencegah SQL Injection adalah menggunakan prepared statements secara konsisten, melakukan validasi input, dan menerapkan prinsip keamanan berlapis. Dengan pemahaman yang baik tentang bagaimana serangan ini bekerja dan strategi mitigasi yang tepat, pengembang dapat membangun aplikasi web yang lebih aman dan melindungi data pengguna mereka.
+Sebagai pengembang web, kita memiliki tanggung jawab untuk memahami kerentanan keamanan dan menerapkan praktik terbaik dalam kode kita. Pengamanan terhadap SQL Injection bukan hanya tentang melindungi data, tetapi juga tentang membangun kepercayaan dengan pengguna aplikasi kita.
+
+## Referensi
+1.	OWASP. (2021). OWASP Top Ten. https://owasp.org/www-project-top-ten/
+2.	Stuttard, D., & Pinto, M. (2018). The Web Application Hacker's Handbook: Finding and Exploiting Security Flaws (2nd ed.). Wiley.
+3.	Clarke, J. (2020). SQL Injection Attacks and Defense (2nd ed.). Syngress.
+4.	Litchfield, D. (2005). The Database Hacker's Handbook: Defending Database Servers. Wiley.
+5.	PHP Manual. (2022). Prepared Statements. https://www.php.net/manual/en/mysqli.quickstart.prepared-statements.php
 
 
 
